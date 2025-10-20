@@ -11,3 +11,5 @@
 #Suggestion:
 # QoL: If players exists from database [players.txt], prompt user and proceed to login
 import login
+# Data Management: Use player ID for easy tracking on return
+# ie. return player_id
