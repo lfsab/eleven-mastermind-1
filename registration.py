@@ -21,7 +21,8 @@ import spacing
 #TODO: implement password encryption
 #for now, password is as is
 
-def registration():
+def registration(new_user): # new_user is defined for integrating login module
+
     spacing.add_space(' ', 50, 0)
     spacing.add_space('#', 50, 1)
 
@@ -29,30 +30,39 @@ def registration():
 
     file_path = "players.txt"
     if os.path.exists(file_path):
-        print(file_path + " already exists.")
-    else:
-            open(file_path, "w")
+        print("") # success pass
+    else: # players.txt does not exist
+        open(file_path, "w").close() # create players.txt
+        print("Successfully created players.txt\n")
     #     choice = input("players already exist. Do you want to log in instead? (yes/no?)").strip()
     #     if choice == "yes":
     #         return login.login()
 
-    while True:
-        username = input("enter a username:").strip()
-        password = input("enter a password:").strip()
+    if new_user == "":
+        # default operation if user prompts registration from the main menu.
+        while True:
+            username = input("enter a username:").strip()
 
-        taken_username = False
-        if os.path.exists(file_path):
-            with open(file_path, "r") as file:
-                for line in file:
-                    if not line.strip():
-                        continue
-                    _ , stored_user, _ = line.strip().split(",")
-                    if stored_user.lower() == username.lower():
-                        print("Username already exists. Try another one")
-                        taken_username = True
-                        break
-        if not taken_username:
-            break
+            taken_username = False
+            if os.path.exists(file_path):
+                with open(file_path, "r") as file:
+                    for line in file:
+                        if not line.strip():
+                            continue
+                        _ , stored_user, _ = line.strip().split(",")
+                        if stored_user.lower() == username.lower():
+                            print("Username already exists. Try another one")
+                            taken_username = True
+                            break
+            if not taken_username:
+                break
+
+            password = input("enter a password:").strip()
+
+    else: # login QoL: if user prompts for a registration if the input username does not exists.
+        username = new_user # to skip username check since it is already checked on the login module
+        password = input(f"enter a password for {username}: ").strip()
+
 
     #generate player id
     player_id = 1
