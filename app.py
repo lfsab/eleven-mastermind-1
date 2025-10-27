@@ -1,8 +1,7 @@
 # Main Program
 # To be run at start
 
-import login
-import registration
+import user
 import spacing # for efficient border creation on the user interface
 
 # Print Startup Screen
@@ -23,12 +22,12 @@ print("        [N] New Player      [L] Login          ")
 spacing.add_space(' ', 50, 0)
 
 while True:
-    player_select = input("     Select your option:")
+    player_select = input("     Select your option: ")
     if player_select.lower() == 'n':
-        player_id = registration.registration("")
+        player_id = user.reg("")
         break
     elif player_select.lower() == 'l':
-        player_id = login.login()
+        player_id = user.login()
         break
     else:
         print("Invalid option selected.")

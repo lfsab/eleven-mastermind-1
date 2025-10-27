@@ -13,7 +13,6 @@
 # Data Management: Use player ID for easy tracking on return
 # ie. return player_id
 
-import login
 import os
 import spacing
 
@@ -21,7 +20,7 @@ import spacing
 #TODO: implement password encryption
 #for now, password is as is
 
-def registration(new_user): # new_user is defined for integrating login module
+def reg(new_user): # new_user is defined for integrating login module
 
     spacing.add_space(' ', 50, 0)
     spacing.add_space('#', 50, 1)
@@ -82,3 +81,18 @@ def registration(new_user): # new_user is defined for integrating login module
 
 # if __name__ == "__main__":
 #     registration()
+
+
+# Login
+# 1. Ask for username and password.
+# 2. Look up the username in players.txt, 
+# decrypt the stored password, 
+# and check for a match. 
+# 3. Deny access if there isn’t a match.
+
+def login(old_user):
+    player_id = old_user
+    return player_id
+
+# Suggestion:
+# If username not found, initiate new registration
