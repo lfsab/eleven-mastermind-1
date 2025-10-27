@@ -25,7 +25,7 @@ spacing.add_space(' ', 50, 0)
 while True:
     player_select = input("     Select your option:")
     if player_select.lower() == 'n':
-        player_id = registration.registration()
+        player_id = registration.registration("")
         break
     elif player_select.lower() == 'l':
         player_id = login.login()
