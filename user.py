@@ -56,7 +56,7 @@ def reg(new_user): # new_user is defined for integrating login module
             if not taken_username:
                 break
 
-            password = input("enter a password:").strip()
+        password = input("enter a password:").strip()
 
     else: # login QoL: if user prompts for a registration if the input username does not exists.
         username = new_user # to skip username check since it is already checked on the login module
