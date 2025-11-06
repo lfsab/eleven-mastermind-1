@@ -27,13 +27,15 @@ while True:
         player_id = user.reg("")
         break
     elif player_select.lower() == 'l':
-        player_id = user.login()
+        player_id = user.login("")
         break
     else:
         print("Invalid option selected.")
 
 # Open Game
 import game
+
+game.start_game(player_id)
 
 #Testing collaborators commit
 # Testing Pull Request
