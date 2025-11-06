@@ -17,26 +17,31 @@ score = 40
 secret_code_grid = ["❔","❔","❔","❔"]
 
 
-guess_grid = ["🔘","🔘","🔘","🔘",
-              "🔘","🔘","🔘","🔘",
-              "🔘","🔘","🔘","🔘",
-              "🔘","🔘","🔘","🔘",
-              "🔘","🔘","🔘","🔘",
-              "🔘","🔘","🔘","🔘",
-              "🔘","🔘","🔘","🔘",
-              "🔘","🔘","🔘","🔘",
-              "🔘","🔘","🔘","🔘",
-              "🔘","🔘","🔘","🔘"]   # row 10 [36,...,39]
-result_grid = ["🔳","🔳","🔳","🔳",
-               "🔳","🔳","🔳","🔳",
-               "🔳","🔳","🔳","🔳",
-               "🔳","🔳","🔳","🔳",
-               "🔳","🔳","🔳","🔳",
-               "🔳","🔳","🔳","🔳",
-               "🔳","🔳","🔳","🔳",
-               "🔳","🔳","🔳","🔳",
-               "🔳","🔳","🔳","🔳",
-               "🔳","🔳","🔳","🔳"]   # row 10 [36,...,39]
+# guess_grid = ["🔘","🔘","🔘","🔘",
+#               "🔘","🔘","🔘","🔘",
+#               "🔘","🔘","🔘","🔘",
+#               "🔘","🔘","🔘","🔘",
+#               "🔘","🔘","🔘","🔘",
+#               "🔘","🔘","🔘","🔘",
+#               "🔘","🔘","🔘","🔘",
+#               "🔘","🔘","🔘","🔘",
+#               "🔘","🔘","🔘","🔘",
+#               "🔘","🔘","🔘","🔘"]   # row 10 [36,...,39]
+
+guess_grid = [f"{i:02d}" for i in range(40)]
+
+# result_grid = ["🔳","🔳","🔳","🔳",
+#                "🔳","🔳","🔳","🔳",
+#                "🔳","🔳","🔳","🔳",
+#                "🔳","🔳","🔳","🔳",
+#                "🔳","🔳","🔳","🔳",
+#                "🔳","🔳","🔳","🔳",
+#                "🔳","🔳","🔳","🔳",
+#                "🔳","🔳","🔳","🔳",
+#                "🔳","🔳","🔳","🔳",
+#                "🔳","🔳","🔳","🔳"]   # row 10 [36,...,39]
+
+result_grid = [f"{i:02d}" for i in range(40)]
 
 pointer_grid = ["⬛","⬛","⬛","⬛","⬛","⬛","⬛","⬛","⬛","⬛"] # row 1 [0,...9]
 
@@ -46,20 +51,42 @@ def render (delay):
 
     #UI Rendering
     #ROW 1
-    ui_r0 = []
-    ui_r0.append(f"║ {pointer_grid[0]}  ║║") # pointer grid
-    for i in range (0,4):
-          ui_r0.append(f" {guess_grid[i] } ") # guess grid #emoji with spaces in-between
-          ui_r0.append(f"║") #closing bracket
-          continue
-    ui_r0.append("║")
-    for i in range (0,4):
-          ui_r0.append(f" {result_grid[i] } ") # result #emoji with spaces in-between
-          ui_r0.append(f"║") #closing bracket
-          continue 
-    ui_r0.append(f"  {secret_code_grid[0]}  ║")
+    for e in range (0,10):
+        row_array_start = (e*4) # simplified (((e*4)+1)-1)
+        row_array_end = ((e*4)+4)
 
-    print("".join(ui_r0))
+        row = []
+
+        row.append(f"║ {pointer_grid[e]}  ║") # pointer grid
+
+        for i in range(row_array_start, row_array_end):
+              row.append(f" {guess_grid[i] } ") # guess grid #emoji with spaces in-between
+              continue
+        
+        row.append("║")
+
+        for i in range(row_array_start, row_array_end):
+              row.append(f" {result_grid[i] } ") # guess grid #emoji with spaces in-between
+              continue        
+        
+        row.append("║")
+        print("".join(row))
+
+
+
+
+    # ui_r0 = []
+    # ui_r0.append(f"║ {pointer_grid[0]}  ║") # pointer grid
+    # for i in range (0,4):
+    #       ui_r0.append(f" {guess_grid[i] } ") # guess grid #emoji with spaces in-between
+    #       continue
+    # ui_r0.append("║")
+    # for i in range (0,4):
+    #       ui_r0.append(f" {result_grid[i] } ") # result #emoji with spaces in-between
+    #       continue 
+    # ui_r0.append("║")
+
+    # print("".join(ui_r0))
     
     return
 
