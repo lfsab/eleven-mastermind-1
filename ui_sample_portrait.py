@@ -2,15 +2,15 @@ import os
 import time
 import secret
 
-border_en = "╚════╩═════════════╩═════════════╝"
+border_en = "╚════════════════════════════════════════════════╝"
 
-border_br = "╠════════════════════════════════╣"
+border_br = "╠════════════════════════════════════════════════╣"
 
-border_mb = "╠════╦═════════════╦═════════════╣"
+border_mb = "╠════╦═════════════════════╦═════════════════════╣"
 
-border_mm = "╠════╬═════════════╬═════════════╣"
+border_mm = "╠════╬═════════════════════╬═════════════════════╣"
 
-border_mt = "╠════╩═════════════╩═════════════╣"
+border_mt = "╠════╩═════════════════════╩═════════════════════╣"
 
 score = 40
 
@@ -49,6 +49,18 @@ def render (delay):
     #clear console using os module
     os.system('cls' if os.name == 'nt' else 'clear')
 
+    print(border_mm)
+
+    post_header = ["║    ║ "]
+    for s in secret_code_grid:
+         post_header.append(f" {s}  ")
+    post_header.append("║")  
+    post_header.append(f"      SCORE: {score}      ║")
+    print("".join(post_header))
+
+
+    print(border_mm)
+
     #UI Rendering
     #ROW 1
     for e in range (0,10):
@@ -60,13 +72,13 @@ def render (delay):
         row.append(f"║ {pointer_grid[e]} ║") # pointer grid
 
         for i in range(row_array_start, row_array_end):
-              row.append(f" {guess_grid[i] }") # guess grid
+              row.append(f"  {guess_grid[i]} ") # guess grid
               continue
         
         row.append(" ║")
 
         for i in range(row_array_start, row_array_end):
-              row.append(f" {result_grid[i] }") # guess grid
+              row.append(f"  {result_grid[i]} ") # guess grid
               continue        
         
         row.append(" ║")
@@ -75,23 +87,12 @@ def render (delay):
 
         continue
     
+    print(border_mt)
+    print("║    [R]🔴  [G]🟢  [B]🔵  [Y]🟡  [W]⚪  [O]🟠    ║")
     print(border_en)
 
 
 
-
-    # ui_r0 = []
-    # ui_r0.append(f"║ {pointer_grid[0]}  ║") # pointer grid
-    # for i in range (0,4):
-    #       ui_r0.append(f" {guess_grid[i] } ") # guess grid #emoji with spaces in-between
-    #       continue
-    # ui_r0.append("║")
-    # for i in range (0,4):
-    #       ui_r0.append(f" {result_grid[i] } ") # result #emoji with spaces in-between
-    #       continue 
-    # ui_r0.append("║")
-
-    # print("".join(ui_r0))
     
     return
 
@@ -114,7 +115,7 @@ while attempts < max_attempts:
       for c in range(0,4):
             while True:
                   order = ["first", "second", "third", "fourth"] # for numerical to word conversion
-                  g = input(f"[Attempt {attempts+1}/{max_attempts}]\nInput your {order[c]} color: ")
+                  g = input(f"[Attempt {attempts+1}/{max_attempts}] Input your {order[c]} color: ")
 
                   if g.lower() == "r":
                         g = "🔴"
@@ -147,7 +148,7 @@ while attempts < max_attempts:
             attempts_str = str(attempts)
 
             g_map = attempts_str + c_str # string addition causes the digit to concatenate
-                    # reversed for portrait orientation 01,02,03,04, 11,12,13,14, ..., 31,32,33,34
+                    # reversed for portrait orientation 01,02,03,04, 11,12,13,14, 21,22,23,24, ..., 91,92,93,94
 
             # mapping offset to convert the code from landscape to portrait
             p_offset = (6 * int(attempts))

@@ -180,6 +180,7 @@ while attempts < max_attempts:
             attempts_str = str(attempts)
 
             g_map = c_str + attempts_str # string addition causes the digit to concatenate
+                  # 00,10,20,30, 01,11,21,31, 02,12,22,32 ..., 09,19,29,39
 
             #convert `g_map` to string and use it to pin-point where to insert the guess to the guess_grid
             guess_grid[int(g_map)] = g 
