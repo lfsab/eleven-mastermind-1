@@ -12,7 +12,7 @@ border_mm = "╠════╬════╬════╬════╬═�
 
 border_mt = "╠════╩════╩════╩════╩════╩════╩════╩════╩════╩════╩══════╣"
 
-
+score = 40
 
 secret_code_grid = ["❔","❔","❔","❔"]
 
@@ -31,6 +31,8 @@ def render (delay):
       os.system('cls' if os.name == 'nt' else 'clear')
 
       #UI Rendering
+
+      #GUESS GRID#
       ui_g1 = ["║"]
       for i in range(0,10):
             ui_g1.append(f" {guess_grid[i]} ") #emoji with spaces in-between
@@ -51,27 +53,35 @@ def render (delay):
             ui_g4.append(f" {guess_grid[i]} ")
             ui_g4.append("║")
       ui_g4.append(f"  {secret_code_grid[3]}  ║") #append secret code 4 of 4
+      ###
+
+      # RESULT GRID #
       ui_r1 = ["║"]
       for i in range(0,10):
             ui_r1.append(f" {result_grid[i]} ")
             ui_r1.append("║")
-      
+      ui_r1.append("      ║")
+
       ui_r2 = ["║"]
       for i in range(10,20):
             ui_r2.append(f" {result_grid[i]} ")
             ui_r2.append("║")
-      
+      ui_r2.append("SCORE:║")
+
       ui_r3 = ["║"]
       for i in range(20,30):
             ui_r3.append(f" {result_grid[i]} ")
             ui_r3.append("║")
+      ui_r3.append(f"  {score}  ║")
 
       ui_r4 = ["║"]
       for i in range(30,40):
             ui_r4.append(f" {result_grid[i]} ")
             ui_r4.append("║")      
+      ui_r4.append("      ║")
+      ####
 
-      time.sleep(delay) # graphical adjustments
+      time.sleep(delay) # graphical adjustments, allow delay rendering row-by-row
       print(border_mb)
 
       time.sleep(delay)
