@@ -1,4 +1,5 @@
 # Ignore Python bytecode caches
 __pycache__/
+
 players.txt
 highscores.txt
