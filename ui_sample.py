@@ -26,6 +26,8 @@ result_grid = ["🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","�
             "🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳",   # row 3 [20,...,29]
             "🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳"]   # row 4 [30,...,39]
 
+pointer_grid = ["⬛","⬛","⬛","⬛","⬛","⬛","⬛","⬛","⬛","⬛"] # row 1 [0,...9]
+
 def render (delay):
       #clear console using os module
       os.system('cls' if os.name == 'nt' else 'clear')
@@ -81,6 +83,12 @@ def render (delay):
       ui_r4.append("      ║")
       ####
 
+      ui_pt = ["║"]
+      for i in range(0,10):
+            ui_pt.append(f" {pointer_grid[i]} ")
+            ui_pt.append("║")
+      ui_pt.append("      ║")
+
       time.sleep(delay) # graphical adjustments, allow delay rendering row-by-row
       print(border_mb)
 
@@ -106,6 +114,10 @@ def render (delay):
       print("".join(ui_r4))
 
       time.sleep(delay)
+      print(border_mm)
+
+      time.sleep(delay)
+      print("".join(ui_pt))
       print(border_mt)
 
       time.sleep(delay)
@@ -125,6 +137,13 @@ render(0.15)
 
 while attempts < max_attempts:
       guess = [] # initialize/reset the attempt guess input list
+
+      # Reset the previous column back to default
+      pointer_grid[attempts-1] = "⬛"
+      # Set the pointer to the current column using the attempt integer to map
+      pointer_grid[attempts] = "🔼"
+      render(0) # call a render here so that the changes made for the new attempt is accounted for
+
       for c in range(0,4):
             while True:
                   order = ["first", "second", "third", "fourth"] # for numerical to word conversion
