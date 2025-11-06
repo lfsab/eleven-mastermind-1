@@ -28,7 +28,9 @@ def start_game(player_id):
     spacing.add_space('-', 30, 1)
 
     # Generate secret code or winning color combination
-    # secret_code
+    secret_code = secret.secret_code()
+    # For testing purposes, print the secret code
+    print(f"(For testing) Secret Code: {' '.join(secret_code)}")
 
     # Map out allowed options in secret.py to accept user input
     convert_colors = {

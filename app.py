@@ -27,7 +27,7 @@ while True:
         player_id = user.reg("")
         break
     elif player_select.lower() == 'l':
-        player_id = user.login()
+        player_id = user.login("")
         break
     else:
         print("Invalid option selected.")
