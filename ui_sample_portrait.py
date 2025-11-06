@@ -2,46 +2,46 @@ import os
 import time
 import secret
 
-border_en = "╚════════════════════════════════════════════════════════╝"
+border_en = "╚════╩═════════════╩═════════════╝"
 
-border_br = "╠════════════════════════════════════════════════════════╣"
+border_br = "╠════════════════════════════════╣"
 
-border_mb = "╠════╦════╦════╦════╦════╦════╦════╦════╦════╦════╦══════╣"
+border_mb = "╠════╦═════════════╦═════════════╣"
 
-border_mm = "╠════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬══════╣"
+border_mm = "╠════╬═════════════╬═════════════╣"
 
-border_mt = "╠════╩════╩════╩════╩════╩════╩════╩════╩════╩════╩══════╣"
+border_mt = "╠════╩═════════════╩═════════════╣"
 
 score = 40
 
 secret_code_grid = ["❔","❔","❔","❔"]
 
 
-# guess_grid = ["🔘","🔘","🔘","🔘",
-#               "🔘","🔘","🔘","🔘",
-#               "🔘","🔘","🔘","🔘",
-#               "🔘","🔘","🔘","🔘",
-#               "🔘","🔘","🔘","🔘",
-#               "🔘","🔘","🔘","🔘",
-#               "🔘","🔘","🔘","🔘",
-#               "🔘","🔘","🔘","🔘",
-#               "🔘","🔘","🔘","🔘",
-#               "🔘","🔘","🔘","🔘"]   # row 10 [36,...,39]
+guess_grid = ["🔘","🔘","🔘","🔘",
+              "🔘","🔘","🔘","🔘",
+              "🔘","🔘","🔘","🔘",
+              "🔘","🔘","🔘","🔘",
+              "🔘","🔘","🔘","🔘",
+              "🔘","🔘","🔘","🔘",
+              "🔘","🔘","🔘","🔘",
+              "🔘","🔘","🔘","🔘",
+              "🔘","🔘","🔘","🔘",
+              "🔘","🔘","🔘","🔘"]   # row 10 [36,...,39]
 
-guess_grid = [f"{i:02d}" for i in range(40)]
+# guess_grid_a = [f"{i:02d}" for i in range(40)]
 
-# result_grid = ["🔳","🔳","🔳","🔳",
-#                "🔳","🔳","🔳","🔳",
-#                "🔳","🔳","🔳","🔳",
-#                "🔳","🔳","🔳","🔳",
-#                "🔳","🔳","🔳","🔳",
-#                "🔳","🔳","🔳","🔳",
-#                "🔳","🔳","🔳","🔳",
-#                "🔳","🔳","🔳","🔳",
-#                "🔳","🔳","🔳","🔳",
-#                "🔳","🔳","🔳","🔳"]   # row 10 [36,...,39]
+result_grid = ["🔳","🔳","🔳","🔳",
+               "🔳","🔳","🔳","🔳",
+               "🔳","🔳","🔳","🔳",
+               "🔳","🔳","🔳","🔳",
+               "🔳","🔳","🔳","🔳",
+               "🔳","🔳","🔳","🔳",
+               "🔳","🔳","🔳","🔳",
+               "🔳","🔳","🔳","🔳",
+               "🔳","🔳","🔳","🔳",
+               "🔳","🔳","🔳","🔳"]   # row 10 [36,...,39]
 
-result_grid = [f"{i:02d}" for i in range(40)]
+# result_grid_a = [f"{i:02d}" for i in range(40)]
 
 pointer_grid = ["⬛","⬛","⬛","⬛","⬛","⬛","⬛","⬛","⬛","⬛"] # row 1 [0,...9]
 
@@ -57,20 +57,25 @@ def render (delay):
 
         row = []
 
-        row.append(f"║ {pointer_grid[e]}  ║") # pointer grid
+        row.append(f"║ {pointer_grid[e]} ║") # pointer grid
 
         for i in range(row_array_start, row_array_end):
-              row.append(f" {guess_grid[i] } ") # guess grid #emoji with spaces in-between
+              row.append(f" {guess_grid[i] }") # guess grid
               continue
         
-        row.append("║")
+        row.append(" ║")
 
         for i in range(row_array_start, row_array_end):
-              row.append(f" {result_grid[i] } ") # guess grid #emoji with spaces in-between
+              row.append(f" {result_grid[i] }") # guess grid
               continue        
         
-        row.append("║")
+        row.append(" ║")
         print("".join(row))
+        time.sleep(delay)
+
+        continue
+    
+    print(border_en)
 
 
 
@@ -103,13 +108,13 @@ while attempts < max_attempts:
       # Reset the previous column back to default
       pointer_grid[attempts-1] = "⬛"
       # Set the pointer to the current column using the attempt integer to map
-      pointer_grid[attempts] = "▶️"
+      pointer_grid[attempts] = "▶️ "
       render(0) # call a render here so that the changes made for the new attempt is accounted for
 
       for c in range(0,4):
             while True:
                   order = ["first", "second", "third", "fourth"] # for numerical to word conversion
-                  g = input(f"[Attempt {attempts+1}/{max_attempts}] Input your {order[c]} color: ")
+                  g = input(f"[Attempt {attempts+1}/{max_attempts}]\nInput your {order[c]} color: ")
 
                   if g.lower() == "r":
                         g = "🔴"
@@ -141,10 +146,14 @@ while attempts < max_attempts:
             c_str = str(c)
             attempts_str = str(attempts)
 
-            g_map = c_str + attempts_str # string addition causes the digit to concatenate
+            g_map = attempts_str + c_str # string addition causes the digit to concatenate
+                    # reversed for portrait orientation 01,02,03,04, 11,12,13,14, ..., 31,32,33,34
+
+            # mapping offset to convert the code from landscape to portrait
+            p_offset = (6 * int(attempts))
 
             #convert `g_map` to string and use it to pin-point where to insert the guess to the guess_grid
-            guess_grid[int(g_map)] = g 
+            guess_grid[(int(g_map) - int(p_offset))] = g 
 
             render(0)
       
