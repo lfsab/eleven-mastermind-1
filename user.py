@@ -188,10 +188,8 @@ def login(old_user):
     else:
         return login("") # loop back to login
 
-# Suggestion:
-# If username not found, initiate new registration
 
-
-
-
-
+# Safety check: simply a quick login verification during game start to prevent login bypass
+def safety_check(player_id, password):
+    # To do...
+    return True

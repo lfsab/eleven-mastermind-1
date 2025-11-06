@@ -16,6 +16,10 @@ import spacing
 # Use score.py to retrieve score and manage highscores.txt
 import score
 
+# Import os for file and console manipulation
+import os
+import time # for time delays
+
 def start_game(player_id):
     # Check if user has valid login
     if not player_id:
@@ -29,8 +33,6 @@ def start_game(player_id):
 
     # Generate secret code or winning color combination
     secret_code = secret.secret_code()
-    # For testing purposes, print the secret code
-    print(f"(For testing) Secret Code: {' '.join(secret_code)}")
 
     # Map out allowed options in secret.py to accept user input
     convert_colors = {
