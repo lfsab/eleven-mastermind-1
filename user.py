@@ -91,15 +91,14 @@ def reg(new_user): # new_user is defined for integrating login module
     else: # players.txt does not exist
         open(file_path, "w").close() # create players.txt
         print("Successfully created players.txt\n")
-    #     choice = input("players already exist. Do you want to log in instead? (yes/no?)").strip()
-    #     if choice == "yes":
-    #         return login.login()
 
     if new_user == "":
         # default operation if user prompts registration from the main menu.
+        username = input("Enter a UserName (Case Sensitive):").strip()
+    else: # Registration QoL: if user prompts during registration if the input username does not exists.
+        username = new_user # to skip username input since it is already provided on the login function call
+    
         while True:
-            username = input("enter a username:").strip()
-
             taken_username = False
             if os.path.exists(file_path):
                 with open(file_path, "r") as file:
@@ -108,17 +107,17 @@ def reg(new_user): # new_user is defined for integrating login module
                             continue
                         _ , stored_user, _ = line.strip().split(",")
                         if stored_user.lower() == username.lower():
-                            print("Username already exists. Try another one")
-                            taken_username = True
-                            break
+                            choice = input("players already exist. Do you want to log in instead? (yes/no?)").strip()
+                            if choice == "yes":
+                                return login(username) # proceed to login module
+                            else:
+                                print("please try a different username.")
+                                taken_username = True
+                                break # loop back to username input
             if not taken_username:
                 break
 
         password = input("enter a password:").strip()
-
-    else: # login QoL: if user prompts for a registration if the input username does not exists.
-        username = new_user # to skip username check since it is already checked on the login module
-        password = input(f"enter a password for {username}: ").strip()
 
 
     #generate player id
@@ -130,15 +129,15 @@ def reg(new_user): # new_user is defined for integrating login module
                 last_id = int(lines[-1].split(",")[0])
                 player_id = last_id + 1
 
+    #encrypt password
+    password = encrypt_text(password)
+
     #save player data
     with open(file_path, "a") as file:
         file.write(f"{player_id},{username},{password}\n")
 
-    print(f"registration complete! welcome, {username}. Your player ID is {player_id} ")
+    print(f"registration complete! welcome, {username}#{player_id} ")
     return player_id
-
-# if __name__ == "__main__":
-#     registration()
 
 
 # Login
@@ -149,8 +148,45 @@ def reg(new_user): # new_user is defined for integrating login module
 # 3. Deny access if there isn’t a match.
 
 def login(old_user):
-    player_id = old_user
-    return player_id
+    spacing.add_space(' ', 50, 0)
+    spacing.add_space('#', 50, 1)
+
+    print("Player Login")
+
+    file_path = "players.txt"
+    if not os.path.exists(file_path):
+        # assumes that no players are registered yet since players.txt does not exist
+        print("players.txt not found. Kindly register first.")
+        return reg("")
+
+    if old_user == "":
+        # default operation if user prompts login from the main menu.
+        username = input("Enter your UserName (Case Sensitive): ").strip()
+    else: # for login QoL: if user prompts during registration if the input username already exists.
+        username = old_user # to skip username input since it is already checked on the registration module
+
+    with open(file_path, "r") as file:
+        for line in file:
+            if not line.strip():
+                continue
+            player_id, stored_username, stored_password = line.strip().split(",") # mapping the data
+            if username == stored_username: # case sensitive check
+                decrypted_password = decrypt_text(stored_password)
+                password = input("Enter your Password: ").strip()
+                if decrypted_password == password:
+                    print(f"login successful! welcome back, {username}#{player_id}.")
+                    return int(player_id)
+                else:
+                    print("Incorrect password. Access denied.")
+                    # loop back to login
+                    return login(username)
+
+    print(f"Player {username} not found. Would you like to register instead? (Y/N?)")
+    choice = input().strip()
+    if choice.lower() == 'y':
+        return reg(username)
+    else:
+        return login("") # loop back to login
 
 # Suggestion:
 # If username not found, initiate new registration
