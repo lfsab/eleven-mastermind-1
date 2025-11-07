@@ -1,2 +1,0 @@
-1,player1,password
-2,test,test2
