@@ -1,19 +1,39 @@
-import os
-import time
+# Game Proper
+# Mastermind
+
+# Game safeguard: avoid bypass of user login & registration
+# Utilize player_id
+# ie def game(player_id)
+# exit if player_id = null
+# then check player_id exists on player.txt
+
+# Generate the secret key
 import secret
+
+# Generate the UI for the game board
 import spacing
 
+# Use score.py to retrieve score and manage highscores.txt
+import score
+
+# Import os for file and console manipulation
+import os
+import time # for time delays
+
 # Set max attempts for the game
-attempts = 0 # intitialization | DO NOT EDIT
+attempts = 0 # intitialization | DO NOT EDIT 
+userscore = 0 # score initialization
 max_attempts = 10 # parameter: how many tries a player will have
 to_guess = 4 # parameter: how many colors to guess in the game
 
-secret_code_grid = [f"❔" for i in range(to_guess)]
+# Generate secret code or winning color combination with the length depends on the `to_guess` parameter
+secret_code = secret.secret_code(to_guess)
 
 # adapt a new grid generation to account to dynamic parameters
 guess_grid = [["🔘" for i in range(to_guess)] for n in range (max_attempts)]
 result_grid = [["🔳" for i in range(to_guess)] for n in range (max_attempts)]
 pointer_grid = [f"⬛" for i in range(max_attempts)]
+secret_code_grid = [f"❔" for i in range(to_guess)]
 
 def render (delay):
       #clear console using os module
@@ -89,17 +109,17 @@ render(0.15)
 
 while attempts < max_attempts:
       guess = [] # initialize/reset the attempt guess input list
-
-      # Reset the previous column back to default
-      pointer_grid[attempts-1] = "⬛"
+      # Update pointer to indicate the previous attempt fails
+      # safety net to avoid underflow/wrap-arround error on 0 minus 1
+      if attempts !=0:
+            pointer_grid[attempts-1] = "❌"
       # Set the pointer to the current column using the attempt integer to map
       pointer_grid[attempts] = "🔼"
       render(0) # call a render here so that the changes made for the new attempt is accounted for
 
-      for c in range(0,4):
+      for c in range(to_guess):
             while True:
-                  order = ["first", "second", "third", "fourth"] # for numerical to word conversion
-                  g = input(f"[Attempt {attempts+1}/{max_attempts}] Input your {order[c]} color: ")
+                  g = input(f"[Attempt {attempts+1}/{max_attempts}] Input your color #{c+1}: ")
 
                   if g.lower() == "r":
                         g = "🔴"
@@ -131,4 +151,72 @@ while attempts < max_attempts:
 
             render(0)
       
-      attempts += 1
+      # Confirm User Input
+      while True:
+            print("-".join(guess))
+            confirm = input("Are you sure of this combination [Y/N]? ")
+            confirm = confirm.lower()
+            if confirm == "y":
+                  secret_code_string = "".join(secret_code)
+                  secret_code_check = list(secret_code_string)
+                  correctness = 0
+                  # Perform checks
+                  #copy secret_code to an editable list
+                  for i in range (to_guess):
+                        result_grid[attempts][i] = "🕚"
+                        render(0)
+                        time.sleep(1)
+                        #check first if current guess[i] is found in the array
+                        if guess[i] in secret_code_check:
+                              # perform another check if the index of found color match current `i`
+                              if int(i) == secret_code_check.index(guess[i]):
+                                    # Correct color in the correct position.
+                                    result_grid[attempts][i] = "⚫"
+                                    correctness += 1 # increment to indicate that one guess is correct
+                                    #prevent the next check to account an already correct color
+                                    secret_code_check[i] = " "
+                                    render(0)
+                                    time.sleep(1)
+                              else: 
+                                    #Correct color in the wrong position.
+                                    result_grid[attempts][i] = "⚪"
+                                    #prevent the next check to account an already checked color
+                                    secret_code_check[int(secret_code_check.index(guess[i]))] = " "
+                                    print("Check #3")
+                                    render(0)
+                                    time.sleep(1)
+                        else: # guess it not found
+                              result_grid[attempts][i] = "🔳"
+                              print("Check #4")
+                              render(0)
+                              time.sleep(1)
+                  
+                  # Check for correctness
+                  if correctness == int(to_guess):
+                        # this means that all colors has been guessed
+                        pointer_grid[attempts] = "✅"
+                        # reveal the hidden code
+                        for r in range (to_guess):
+                              secret_code_grid[r] = secret_code[r]
+                        render(0)
+                        userscore = 10-attempts #compute userscore from the attempts
+                        attempts = 10
+                        break
+                  else:
+                        # any value (lower) than the requirement means this attempt failed
+                        # Increment attempts for failed guess
+                        attempts += 1
+                  # break and loop back to the next attempt
+                  break
+            elif confirm == "n":
+                  # resets the guess attempt
+                  for x in range(to_guess):
+                        guess_grid[attempts][x] = "🔘"
+                        render(0) 
+                  # break and loop back to the current attempt
+                  break
+            else:
+                  print("Invalid Input")
+                  # loop back
+
+print(f"User Score: {userscore}")
