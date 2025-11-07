@@ -98,26 +98,26 @@ def reg(new_user): # new_user is defined for integrating login module
     else: # Registration QoL: if user prompts during registration if the input username does not exists.
         username = new_user # to skip username input since it is already provided on the login function call
     
-        while True:
-            taken_username = False
-            if os.path.exists(file_path):
-                with open(file_path, "r") as file:
-                    for line in file:
-                        if not line.strip():
-                            continue
-                        _ , stored_user, _ = line.strip().split(",")
-                        if stored_user.lower() == username.lower():
-                            choice = input("players already exist. Do you want to log in instead? (yes/no?)").strip()
-                            if choice == "yes":
-                                return login(username) # proceed to login module
-                            else:
-                                print("please try a different username.")
-                                taken_username = True
-                                break # loop back to username input
-            if not taken_username:
-                break
+    while True:
+        taken_username = False
+        if os.path.exists(file_path):
+            with open(file_path, "r") as file:
+                for line in file:
+                    if not line.strip():
+                        continue
+                    _ , stored_user, _ = line.strip().split(",")
+                    if stored_user.lower() == username.lower():
+                        choice = input("players already exist. Do you want to log in instead? (yes/no?)").strip()
+                        if choice == "yes":
+                            return login(username) # proceed to login module
+                        else:
+                            print("please try a different username.")
+                            taken_username = True
+                            break # loop back to username input
+        if not taken_username:
+            break
 
-        password = input("enter a password:").strip()
+    password = input("enter a password: ").strip()
 
 
     #generate player id

@@ -24,7 +24,7 @@ import time # for time delays
 attempts = 0 # intitialization | DO NOT EDIT 
 userscore = 0 # score initialization
 max_attempts = 10 # parameter: how many tries a player will have
-to_guess = 4 # parameter: how many colors to guess in the game
+to_guess = 10 # parameter: how many colors to guess in the game
 
 # Generate secret code or winning color combination with the length depends on the `to_guess` parameter
 secret_code = secret.secret_code(to_guess)
@@ -110,12 +110,16 @@ render(0.15)
 while attempts < max_attempts:
       guess = [] # initialize/reset the attempt guess input list
       # Update pointer to indicate the previous attempt fails
-      # safety net to avoid underflow/wrap-arround error on 0 minus 1
+      # with safety net to avoid underflow/wrap-arround error on 0 minus 1
       if attempts !=0:
             pointer_grid[attempts-1] = "❌"
       # Set the pointer to the current column using the attempt integer to map
       pointer_grid[attempts] = "🔼"
       render(0) # call a render here so that the changes made for the new attempt is accounted for
+      
+      # Print `try again` except on the initial attempts=0
+      if attempts > 0:
+            print("Try again!")
 
       for c in range(to_guess):
             while True:
@@ -182,12 +186,10 @@ while attempts < max_attempts:
                                     result_grid[attempts][i] = "⚪"
                                     #prevent the next check to account an already checked color
                                     secret_code_check[int(secret_code_check.index(guess[i]))] = " "
-                                    print("Check #3")
                                     render(0)
                                     time.sleep(1)
                         else: # guess it not found
                               result_grid[attempts][i] = "🔳"
-                              print("Check #4")
                               render(0)
                               time.sleep(1)
                   
@@ -199,12 +201,14 @@ while attempts < max_attempts:
                         for r in range (to_guess):
                               secret_code_grid[r] = secret_code[r]
                         render(0)
+                        print(f"You won in {attempts} attempts!")
                         userscore = 10-attempts #compute userscore from the attempts
-                        attempts = 10
+                        attempts = 10 # set attempt value to 10 to exit the loop
                         break
                   else:
                         # any value (lower) than the requirement means this attempt failed
                         # Increment attempts for failed guess
+                        userscore = 0
                         attempts += 1
                   # break and loop back to the next attempt
                   break
