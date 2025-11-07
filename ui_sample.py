@@ -1,32 +1,19 @@
 import os
 import time
 import secret
+import spacing
 
-border_en = "╚════════════════════════════════════════════════════════╝"
+# Set max attempts for the game
+attempts = 0 # intitialization | DO NOT EDIT
+max_attempts = 10 # parameter: how many tries a player will have
+to_guess = 4 # parameter: how many colors to guess in the game
 
-border_br = "╠════════════════════════════════════════════════════════╣"
+secret_code_grid = [f"❔" for i in range(to_guess)]
 
-border_mb = "╠════╦════╦════╦════╦════╦════╦════╦════╦════╦════╦══════╣"
-
-border_mm = "╠════╬════╬════╬════╬════╬════╬════╬════╬════╬════╬══════╣"
-
-border_mt = "╠════╩════╩════╩════╩════╩════╩════╩════╩════╩════╩══════╣"
-
-score = 40
-
-secret_code_grid = ["❔","❔","❔","❔"]
-
-guess_grid = ["🔘","🔘","🔘","🔘","🔘","🔘","🔘","🔘","🔘","🔘", # row 1 [0,...9]
-            "🔘","🔘","🔘","🔘","🔘","🔘","🔘","🔘","🔘","🔘",   # row 2 [10,...,19]
-            "🔘","🔘","🔘","🔘","🔘","🔘","🔘","🔘","🔘","🔘",   # row 3 [20,...,29]
-            "🔘","🔘","🔘","🔘","🔘","🔘","🔘","🔘","🔘","🔘"]   # row 4 [30,...,39]
-
-result_grid = ["🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳",# row 1 [0,...9]
-            "🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳",   # row 2 [10,...,19]
-            "🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳",   # row 3 [20,...,29]
-            "🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳","🔳"]   # row 4 [30,...,39]
-
-pointer_grid = ["⬛","⬛","⬛","⬛","⬛","⬛","⬛","⬛","⬛","⬛"] # row 1 [0,...9]
+# simplified list generation using the parameter given
+guess_grid = [f"🔘" for i in range((max_attempts*to_guess))]
+result_grid = [f"🔳" for i in range((max_attempts*to_guess))]
+pointer_grid = [f"⬛" for i in range(max_attempts)]
 
 def render (delay):
       #clear console using os module
@@ -34,103 +21,65 @@ def render (delay):
 
       #UI Rendering
 
+      time.sleep(delay) # graphical adjustments, allow delay rendering row-by-row
+
+      #spacing module to dynamically add borders based on the game `max_attempts` instead of hardcoded string
+      spacing.border("╠","╦","╣",max_attempts)
+
       #GUESS GRID#
-      ui_g1 = ["║"]
-      for i in range(0,10):
-            ui_g1.append(f" {guess_grid[i]} ") #emoji with spaces in-between
-            ui_g1.append(f"║") #closing bracket
-      ui_g1.append(f"  {secret_code_grid[0]}  ║") #append secret code 1 of 4
-      ui_g2 = ["║"]
-      for i in range(10,20):
-            ui_g2.append(f" {guess_grid[i]} ")
-            ui_g2.append("║")
-      ui_g2.append(f"  {secret_code_grid[1]}  ║") #append secret code 2 of 4
-      ui_g3 = ["║"]
-      for i in range(20,30):
-            ui_g3.append(f" {guess_grid[i]} ")
-            ui_g3.append("║")
-      ui_g3.append(f"  {secret_code_grid[2]}  ║") #append secret code 3 of 4
-      ui_g4 = ["║"]
-      for i in range(30,40):
-            ui_g4.append(f" {guess_grid[i]} ")
-            ui_g4.append("║")
-      ui_g4.append(f"  {secret_code_grid[3]}  ║") #append secret code 4 of 4
+      for e in range(to_guess):
+            row = ["║"]
+            row_start = (e*max_attempts)
+            row_end = row_start + max_attempts
+            for i in range(row_start, row_end):
+                  row.append(f" {guess_grid[i]} ") #emoji with spaces in-between
+                  row.append(f"║") #closing bracket
+            row.append(f"  {secret_code_grid[e]}  ║") #append secret code
+            print("".join(row))
+            time.sleep(delay)
       ###
 
-      # RESULT GRID #
-      ui_r1 = ["║"]
-      for i in range(0,10):
-            ui_r1.append(f" {result_grid[i]} ")
-            ui_r1.append("║")
-      ui_r1.append("      ║")
+      # DIVIDER #
+      spacing.border("╠","╬","╣",max_attempts)
+      time.sleep(delay)
 
-      ui_r2 = ["║"]
-      for i in range(10,20):
-            ui_r2.append(f" {result_grid[i]} ")
-            ui_r2.append("║")
-      ui_r2.append("SCORE:║")
+      #RESULT GRID#
+      for e in range(to_guess):
+            row = ["║"]
+            row_start = (e*max_attempts)
+            row_end = row_start + max_attempts
+            for i in range(row_start, row_end):
+                  row.append(f" {result_grid[i]} ") #emoji with spaces in-between
+                  row.append(f"║") #closing bracket
+            if e == 0:
+                  row.append("GUESS:║")
+            elif e == 1:
+                  row.append(f"  {attempts+1:02d}  ║")
 
-      ui_r3 = ["║"]
-      for i in range(20,30):
-            ui_r3.append(f" {result_grid[i]} ")
-            ui_r3.append("║")
-      ui_r3.append(f"  {score}  ║")
+            print("".join(row))
+            time.sleep(delay)
 
-      ui_r4 = ["║"]
-      for i in range(30,40):
-            ui_r4.append(f" {result_grid[i]} ")
-            ui_r4.append("║")      
-      ui_r4.append("      ║")
-      ####
+      #DIVIDER
+      spacing.border("╠","╬","╣",max_attempts)
+      time.sleep(delay)  
 
       ui_pt = ["║"]
-      for i in range(0,10):
+      for i in range(max_attempts):
             ui_pt.append(f" {pointer_grid[i]} ")
             ui_pt.append("║")
       ui_pt.append("      ║")
 
-      time.sleep(delay) # graphical adjustments, allow delay rendering row-by-row
-      print(border_mb)
-
-      time.sleep(delay)
-      print("".join(ui_g1))
-      time.sleep(delay)
-      print("".join(ui_g2))
-      time.sleep(delay)
-      print("".join(ui_g3)) 
-      time.sleep(delay)
-      print("".join(ui_g4))   
-
-      time.sleep(delay)
-      print(border_mm)
-
-      time.sleep(delay)
-      print("".join(ui_r1))
-      time.sleep(delay)
-      print("".join(ui_r2))
-      time.sleep(delay)
-      print("".join(ui_r3))
-      time.sleep(delay)
-      print("".join(ui_r4))
-
-      time.sleep(delay)
-      print(border_mm)
-
       time.sleep(delay)
       print("".join(ui_pt))
-      print(border_mt)
+      spacing.border("╠","╩","╣",max_attempts)
 
       time.sleep(delay)
-      print("║      [R]🔴  [G]🟢  [B]🔵   [Y]🟡   [W]⚪   [O]🟠       ║")
+      print("║      [R]🔴  [G]🟢  [B]🔵   [Y]🟡   [W]⚪   [O]🟠" + ("     "*(max_attempts-10)) + "       ║")
 
       time.sleep(delay)
-      print(border_en)
+      spacing.border("╚","═","╝",max_attempts)
 
       return
-
-# Set max attempts for the game
-attempts = 0
-max_attempts = 10
 
 #print the initital UI render with delay 0.15 seconds
 render(0.15)
@@ -180,7 +129,7 @@ while attempts < max_attempts:
             attempts_str = str(attempts)
 
             g_map = c_str + attempts_str # string addition causes the digit to concatenate
-                  # 00,10,20,30, 01,11,21,31, 02,12,22,32 ..., 09,19,29,39
+                  # 00,max_attempts,20,30, 01,11,21,31, 02,12,22,32 ..., 09,19,29,39
 
             #convert `g_map` to string and use it to pin-point where to insert the guess to the guess_grid
             guess_grid[int(g_map)] = g 
