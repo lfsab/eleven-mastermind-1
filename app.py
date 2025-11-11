@@ -3,26 +3,33 @@
 
 import user
 import spacing # for efficient border creation on the user interface
+import time
+import os
 
 # Print Startup Screen
-for i in range(1, 2):
-    spacing.add_space('#', 50, 0)
+app_ui_01 = [""]
+app_ui_01.append("╔═══════════════════════════════════════════════════════╗")
+app_ui_01.append("║ 	┏━╸╻  ┏━╸╻ ╻┏━╸┏┓╻             			║")
+app_ui_01.append("║ 	┣╸ ┃  ┣╸ ┃┏┛┣╸ ┃┗┫ 🔴 🟢 🔵 🟡 ⚪ 🟠         	║")
+app_ui_01.append("║ 	┗━╸┗━╸┗━╸┗┛ ┗━╸╹ ╹       			║")
+app_ui_01.append("║   		 ┏┳┓┏━┓┏━┓╺┳╸┏━╸┏━┓┏┳┓╻┏┓╻╺┳┓  		║")
+app_ui_01.append("║ 	⚫⚪⚪⚫ ┃┃┃┣━┫┗━┓ ┃ ┣╸ ┣┳┛┃┃┃┃┃┗┫ ┃┃  	        ║")
+app_ui_01.append("║   		 ╹ ╹╹ ╹┗━┛ ╹ ┗━╸╹┗╸╹ ╹╹╹ ╹╺┻┛  		║")
+app_ui_01.append("╠═══════════════════════════════════════════════════════╣")
+app_ui_01.append("║     A Group Project of Group Eleven for CMSC 202 	║")
+app_ui_01.append("║        1st Semester A.Y. 2025-2026  			║")
+app_ui_01.append("╠═══════════════════════════════════════════════════════╣")
+app_ui_01.append("║	    [N] New Player    	 [L] Login  		║")
+app_ui_01.append("╚═══════════════════════════════════════════════════════╝")
+
+for i in range(len(app_ui_01)):
+    print(app_ui_01[i])
+    time.sleep(0.25)
     continue
 
-print("     ⚫⚪⚪⚫ Eleven Mastermind 🔴🟢🔵🟡⚪🟠       ")
-
-for i in range(1, 2):
-    spacing.add_space('#', 50, 0)
-    continue
-
-# Prompt for Returning or New Players
-
-print("        [N] New Player      [L] Login          ")
-
-spacing.add_space(' ', 50, 0)
 
 while True:
-    player_select = input("     Select your option: ")
+    player_select = input("Select your option: ")
     if player_select.lower() == 'n':
         player_id = user.reg("")
         break
