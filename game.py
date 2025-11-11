@@ -231,7 +231,8 @@ def start_game(player_id):
 
     print(f"User Score: {userscore}")      
       
-    return userscore
+    # Casting userscore to int to make sure it records properly with the function in scores.py
+    return int(userscore)
 
     
 
