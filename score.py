@@ -7,10 +7,13 @@
 # all records generated and read by update_user_score and leaderboard will be
 # in json format
 import json
+import user
 
 # REMINDER: Please make sure to cast the return value of start_game() in game.py to int
 # before using it as the score parameter of update_user_score().
-def update_user_score(username, score):
+def update_user_score(username, score, password):
+
+    user.safety_check(username, password)
     
     # Boolean variable to check if highscore.txt needs to be updated.
     scoreboard_needs_update = False

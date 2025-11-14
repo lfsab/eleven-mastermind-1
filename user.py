@@ -15,6 +15,9 @@
 
 import os
 import spacing
+import render
+import time
+
 
 # To use this function, just call on the function name and pass on the variable 
 # containing the plain text of the user's password
@@ -89,13 +92,10 @@ def decrypt_text(cipher_text, shift):
 def reg(new_user): # new_user is defined for integrating login module
 
     shift = 10 # variable: define the number of shifts for the caesar cipher
-    # NOTE: must be the same value as defined in login
+    # NOTE: must be the same value as defined in login 206
     # if line 156 or 157 was commented out the value above is over-written
 
-    spacing.add_space(' ', 50, 0)
-    spacing.add_space('#', 50, 1)
-
-    print("New Player Registration")
+    render.menu_ui("custom",0,["PLAYER REGISTRATION","Kindly enter a username"])
 
     file_path = "players.txt"
     if os.path.exists(file_path):
@@ -104,29 +104,43 @@ def reg(new_user): # new_user is defined for integrating login module
         open(file_path, "w").close() # create players.txt
         print("Successfully created players.txt\n")
 
-    if new_user == "":
-        # default operation if user prompts registration from the main menu.
-        username = input("Enter a UserName (Case Sensitive): ").strip()
-    else: # Registration QoL: if user prompts during registration if the input username does not exists.
-        username = new_user # to skip username input since it is already provided on the login function call
-    
-    while True:
-        taken_username = False
+    username_loop = True
+ 
+    while username_loop:
+
+        if new_user == "":
+            # default operation if user prompts registration from the main menu.
+            username = input("Input (Case Sensitive): ").strip()
+        else: # Registration QoL: if user prompts during registration if the input username does not exists.
+            username = new_user # to skip username input since it is already provided on the login function call
+
         if os.path.exists(file_path):
             with open(file_path, "r") as file:
+                player_found = False
                 for line in file:
                     if not line.strip():
                         continue
                     _ , stored_user, _ = line.strip().split(",")
-                    if stored_user.lower() == username.lower():
-                        choice = input("Player already exist. Do you want to log in instead? (yes/no?) ").strip()
-                        if choice == "yes":
-                            return login(username) # proceed to login module
-                        else:
-                            print("please try a different username.")
-                            return reg("") # loop back to username input
-        if not taken_username:
-            break
+                    if stored_user == username: # to consider case-senitive username storing
+                        player_found = True
+                        player_exists = f"Player with username '{username}' already exists."
+                        render.menu_ui("custom",0,["PLAYER REGISTRATION",player_exists])
+                        while True:
+                            choice = input("Do you want to log in instead? (yes/no?) ").strip()
+                            if choice == "yes":
+                                return login(username)
+                            elif choice == "no":                        
+                                print("Please try a different username.")
+                                time.sleep(1)
+                                username = ""
+                                username_loop = True
+                                break
+                            else:
+                                print("Invalid Input!")
+                        break
+                    # no action for unique username
+                if not player_found:
+                    username_loop = False
     
     # UPDATE: Commented out validation loop since the array now considered special/non-alphanumeric characters
     # # Password validation loop
@@ -154,14 +168,14 @@ def reg(new_user): # new_user is defined for integrating login module
     #encrypt password
     # shift = len(username) # comment-out if shift is dependent/dynamic to the length of the username
     # shift = len(password) # comment-out if shift is dependent/dynamic to the length of the password
-    password = encrypt_text(password, shift)
+    encrypted_password = encrypt_text(password, shift)
 
     #save player data
     with open(file_path, "a") as file:
-        file.write(f"{player_id},{username},{password}\n")
+        file.write(f"{player_id},{username},{encrypted_password}\n")
 
     # confirm decryption
-    decrypted_password = decrypt_text(password, shift)
+    decrypted_password = decrypt_text(encrypted_password, shift)
 
     print(f"""registration complete! welcome, {username}#{player_id} \n
               please remeber your password: "{decrypted_password}" """) # password confirmaiton 
@@ -173,11 +187,13 @@ def reg(new_user): # new_user is defined for integrating login module
         end_reg = input("Continue? (Y/N): ")
 
         if end_reg.lower() == "y":
+            print("Now loading the game...")
+            time.sleep(3)
             to_end = bool(True)
         else:
             to_end = bool(False)  
 
-    return player_id
+    return (player_id,username,password)
 
 
 # Login
@@ -188,14 +204,13 @@ def reg(new_user): # new_user is defined for integrating login module
 # 3. Deny access if there isn’t a match.
 
 def login(old_user):
-    spacing.add_space(' ', 50, 0)
-    spacing.add_space('#', 50, 1)
 
     shift = 10 # variable: define the number of shifts for the caesar cipher
-    # NOTE: must be the same value as defined in login
+    # NOTE: must be the same value as defined in login on line 10
     # if line 220 or 221 was commented out the value above is over-written
 
-    print("Player Login")
+    render.menu_ui("custom",0,["PLAYER LOGIN","Kindly your username"])
+    
 
     file_path = "players.txt"
     if not os.path.exists(file_path):
@@ -203,40 +218,63 @@ def login(old_user):
         print("players.txt not found. Kindly register first.")
         return reg("")
 
-    if old_user == "":
-        # default operation if user prompts login from the main menu.
-        username = input("Enter your UserName (Case Sensitive): ").strip()
-    else: # for login QoL: if user prompts during registration if the input username already exists.
-        username = old_user # to skip username input since it is already checked on the registration module
+    while True:
+        if old_user == "":
+            # default operation if user prompts login from the main menu.
+            username = input("Input (Case Sensitive): ").strip()
+        else: # for login QoL: if user prompts during registration if the input username already exists.
+            username = old_user # to skip username input since it is already checked on the registration module
 
+        with open(file_path, "r") as file:
+            for line in file:
+                if not line.strip():
+                    continue
+                player_id, stored_username, stored_password = line.strip().split(",") # mapping the data
+                if username == stored_username: # case sensitive check
+                    decrypted_password = decrypt_text(stored_password, shift)
+                    welcome_player = f"Welcome back, {username} ! Enter your password below."
+                    render.menu_ui("custom",0,["PLAYER LOGIN", welcome_player])
+                    password = input("Input: ").strip()
+                    # shift = len(username) # comment-out if shift is dependent/dynamic to the length of the username
+                    # shift = len(password) # comment-out if shift is dependent/dynamic to the length of the password
+                    
+                    if decrypted_password == password:
+                        print(f"login successful! welcome back, {username} - Player #{player_id}.")
+                        time.sleep(1)
+                        print("Now loading the game...")
+                        time.sleep(3)
+                        return (player_id,username,password)
+                    else:
+                        print("Incorrect password. Access denied.")
+                        # loop back to login
+                        return login(username)
+
+        player_none = f"There is no player with username '{username}'."
+        render.menu_ui("custom",0,["PLAYER LOGIN", player_none])
+        choice = input("Would you like to register instead? (Y/N?)").strip()
+        if choice.lower() == 'y':
+            return reg(username)
+        else:
+            print("Please double-check your login credentials.")
+
+
+# Safety check: simply a quick login verification during game start to prevent login bypass
+def safety_check(username, password):
+    shift = 10
+    file_path = "players.txt"
     with open(file_path, "r") as file:
         for line in file:
             if not line.strip():
                 continue
             player_id, stored_username, stored_password = line.strip().split(",") # mapping the data
             if username == stored_username: # case sensitive check
-                decrypted_password = decrypt_text(stored_password, shift)
-                password = input("Enter your Password: ").strip()
                 # shift = len(username) # comment-out if shift is dependent/dynamic to the length of the username
                 # shift = len(password) # comment-out if shift is dependent/dynamic to the length of the password
+                decrypted_password = decrypt_text(stored_password, shift)
                 
                 if decrypted_password == password:
-                    print(f"login successful! welcome back, {username} - Player #{player_id}.")
-                    return int(player_id)
+                    return 0
                 else:
-                    print("Incorrect password. Access denied.")
-                    # loop back to login
-                    return login(username)
-
-    print(f"Player {username} not found. Would you like to register instead? (Y/N?)")
-    choice = input().strip()
-    if choice.lower() == 'y':
-        return reg(username)
-    else:
-        return login("") # loop back to login
-
-
-# Safety check: simply a quick login verification during game start to prevent login bypass
-def safety_check(player_id, password):
-    # To do...
-    return True
+                    print("Safety Check failed. Access denied!")
+                    import sys
+                    sys.exit()

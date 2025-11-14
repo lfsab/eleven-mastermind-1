@@ -20,7 +20,15 @@ import score
 import os
 import time # for time delays
 
-def start_game(player_id):
+import user # for safety check
+
+def start_game(player_id,username,password):
+    os.system('cls' if os.name == 'nt' else 'clear')
+    time.sleep(1)
+    
+    #Safety Check
+    user.safety_check(username,password)
+
     # Set max attempts for the game
     attempts = 0 # intitialization | DO NOT EDIT 
     userscore = 0 # score initialization | DO NOT EDIT
@@ -46,7 +54,8 @@ def start_game(player_id):
         time.sleep(delay) # graphical adjustments, allow delay rendering row-by-row
 
         spacing.border("╔", "═", "╗",max_attempts)
-        print(f"║             Welcome Player# {player_id} to Mastermind!           ║")
+        greeting =f"Welcome, {username} to Mastermind!"
+        print("║" + greeting.center(56) + "║")
         print(f"║  Guess the {to_guess}-color combination in {max_attempts} attempts or less  ║")
 
         #spacing module to dynamically add borders based on the game `max_attempts` instead of hardcoded string
@@ -229,10 +238,5 @@ def start_game(player_id):
                         print("Invalid Input")
                         # loop back
 
-    print(f"User Score: {userscore}")      
-      
     # Casting userscore to int to make sure it records properly with the function in scores.py
-    return int(userscore)
-
-    
-
+    return(username,userscore,password)

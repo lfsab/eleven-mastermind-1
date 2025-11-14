@@ -2,32 +2,18 @@
 # To be run at start
 
 import user
-import spacing # for efficient border creation on the user interface
+import render
+import score
 
-# Print Startup Screen
-for i in range(1, 2):
-    spacing.add_space('#', 50, 0)
-    continue
-
-print("     ⚫⚪⚪⚫ Eleven Mastermind 🔴🟢🔵🟡⚪🟠       ")
-
-for i in range(1, 2):
-    spacing.add_space('#', 50, 0)
-    continue
-
-# Prompt for Returning or New Players
-
-print("        [N] New Player      [L] Login          ")
-
-spacing.add_space(' ', 50, 0)
+render.menu_ui("",0.15,[""])
 
 while True:
-    player_select = input("     Select your option: ")
+    player_select = input("Select your option: ")
     if player_select.lower() == 'n':
-        player_id = user.reg("")
+        player = list(user.reg(""))
         break
     elif player_select.lower() == 'l':
-        player_id = user.login("")
+        player = list(user.login(""))
         break
     else:
         print("Invalid option selected.")
@@ -35,7 +21,12 @@ while True:
 # Open Game
 import game
 
-game.start_game(player_id)
+result = list(game.start_game(player[0],player[1],player[2]))
+
+# return (player_id,username,password,userscore)
+score.update_user_score(result[0],result[1],result[2])
+
+score.leaderboard()
 
 #Testing collaborators commit
 # Testing Pull Request
