@@ -1,0 +1,185 @@
+name: Create Release Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g., 1.0, 1.1, 2.0). Leave empty to auto-increment by 0.1'
+        required: false
+        type: string
+      files:
+        description: 'Files to include (comma-separated). Leave empty for default set.'
+        required: false
+        default: 'app.py,game.py,render.py,score.py,secret.py,spacing.py,user.py'
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Determine version
+        id: version
+        run: |
+          # Get the latest tag that matches v*.* pattern
+          LATEST_TAG=$(git tag -l "v*.*" | sort -V | tail -n 1)
+          
+          if [ -z "$LATEST_TAG" ]; then
+            # No tags found, start with v1.0
+            NEW_VERSION="1.0"
+          elif [ -n "${{ github.event.inputs.version }}" ]; then
+            # Use provided version
+            NEW_VERSION="${{ github.event.inputs.version }}"
+          else
+            # Auto-increment by 0.1
+            CURRENT_VERSION=${LATEST_TAG#v}
+            NEW_VERSION=$(echo "$CURRENT_VERSION + 0.1" | bc)
+          fi
+          
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "New version will be: v$NEW_VERSION"
+      
+      - name: Check if tag exists
+        id: check_tag
+        run: |
+          if git rev-parse "v${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "Tag v${{ steps.version.outputs.version }} already exists!"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "Tag v${{ steps.version.outputs.version }} is available"
+          fi
+      
+      - name: Exit if tag exists
+        if: steps.check_tag.outputs.exists == 'true'
+        run: |
+          echo "Error: Tag v${{ steps.version.outputs.version }} already exists."
+          echo "Please specify a different version or delete the existing tag."
+          exit 1
+      
+      - name: Prepare release files
+        run: |
+          mkdir -p release-package
+          
+          # Parse files input (comma-separated)
+          IFS=',' read -ra FILES <<< "${{ github.event.inputs.files }}"
+          
+          echo "Including files in release package:"
+          for file in "${FILES[@]}"; do
+            # Trim whitespace
+            file=$(echo "$file" | xargs)
+            if [ -f "$file" ]; then
+              cp "$file" release-package/
+              echo "$file"
+            else
+              echo "$file (not found, skipping)"
+            fi
+          done
+          
+          # Create a version file
+          echo "v${{ steps.version.outputs.version }}" > release-package/VERSION.txt
+          
+          # Create a README for the release
+          cat > release-package/README.txt << EOF
+          Eleven Mastermind - Release v${{ steps.version.outputs.version }}
+          ================================================
+          
+          Release Date: $(date +"%Y-%m-%d")
+          
+          Included Files:
+          $(ls -1 release-package/)
+          
+          To run the game:
+          python app.py
+          
+          EOF
+      
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Get the latest tag
+          LATEST_TAG=$(git tag -l "v*.*" | sort -V | tail -n 1)
+          
+          if [ -z "$LATEST_TAG" ]; then
+            echo "No previous tags found. Generating changelog from all commits."
+            CHANGELOG=$(git log --pretty=format:"- %s (%an)" --no-merges)
+          else
+            echo "Generating changelog since $LATEST_TAG"
+            CHANGELOG=$(git log ${LATEST_TAG}..HEAD --pretty=format:"- %s (%an)" --no-merges)
+          fi
+          
+          # Save to file and output
+          echo "$CHANGELOG" > CHANGELOG.md
+          
+          # For GitHub output, we need to handle multiline
+          {
+            echo 'changelog<<EOF'
+            echo "$CHANGELOG"
+            echo 'EOF'
+          } >> $GITHUB_OUTPUT
+          
+          if [ -z "$CHANGELOG" ]; then
+            echo "No new commits since last release."
+            echo "changelog=No changes" >> $GITHUB_OUTPUT
+          fi
+          
+          echo "Generated changelog:"
+          echo "$CHANGELOG"
+      
+      - name: Create release archive
+        run: |
+          cd release-package
+          
+          # Include changelog in the package
+          if [ -f ../CHANGELOG.md ]; then
+            cp ../CHANGELOG.md .
+          fi
+          
+          zip -r ../eleven-mastermind-v${{ steps.version.outputs.version }}.zip .
+          cd ..
+          
+          echo "Created archive: eleven-mastermind-v${{ steps.version.outputs.version }}.zip"
+          echo "Contents:"
+          unzip -l eleven-mastermind-v${{ steps.version.outputs.version }}.zip
+      
+      - name: Create Git tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "v${{ steps.version.outputs.version }}" -m "Release v${{ steps.version.outputs.version }}"
+          git push origin "v${{ steps.version.outputs.version }}"
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: Release v${{ steps.version.outputs.version }}
+          body: |
+            ## Eleven Mastermind v${{ steps.version.outputs.version }}
+            
+            ### Release Package
+            This release includes the following files:
+            ${{ github.event.inputs.files }}
+            
+            ### Changelog
+            ${{ steps.changelog.outputs.changelog }}
+            
+            ### How to Use
+            1. Download `eleven-mastermind-v${{ steps.version.outputs.version }}.zip`
+            2. Extract the archive
+            3. Run `python app.py` to start the game
+            
+            ---
+            *Release created on $(date +"%Y-%m-%d")*
+          files: |
+            eleven-mastermind-v${{ steps.version.outputs.version }}.zip
+          draft: false
+          prerelease: false
