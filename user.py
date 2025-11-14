@@ -168,14 +168,14 @@ def reg(new_user): # new_user is defined for integrating login module
     #encrypt password
     # shift = len(username) # comment-out if shift is dependent/dynamic to the length of the username
     # shift = len(password) # comment-out if shift is dependent/dynamic to the length of the password
-    password = encrypt_text(password, shift)
+    encrypted_password = encrypt_text(password, shift)
 
     #save player data
     with open(file_path, "a") as file:
-        file.write(f"{player_id},{username},{password}\n")
+        file.write(f"{player_id},{username},{encrypted_password}\n")
 
     # confirm decryption
-    decrypted_password = decrypt_text(password, shift)
+    decrypted_password = decrypt_text(encrypted_password, shift)
 
     print(f"""registration complete! welcome, {username}#{player_id} \n
               please remeber your password: "{decrypted_password}" """) # password confirmaiton 
