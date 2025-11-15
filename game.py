@@ -248,5 +248,12 @@ def start_game(player_id,username,password):
                         print("Invalid Input")
                         # loop back
 
+#Answer is revealed when user fails all 10 attempts
+    if attempts >= max_attempts:
+          for r in range(to_guess):
+                secret_code_grid[r] = secret_code[r]
+                render(0)  
+                print("You've used all attempts! The secret code was revealed above.")
+
     # Casting userscore to int to make sure it records properly with the function in scores.py
     return(username,userscore,password)
