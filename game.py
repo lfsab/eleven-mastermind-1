@@ -50,7 +50,6 @@ def start_game(player_id,username,password):
         os.system('cls' if os.name == 'nt' else 'clear')
 
         #UI Rendering
-
         time.sleep(delay) # graphical adjustments, allow delay rendering row-by-row
 
         spacing.border("╔", "═", "╗",max_attempts)
@@ -96,7 +95,6 @@ def start_game(player_id,username,password):
 
                 print("".join(row))
                 time.sleep(delay)
-
         #DIVIDER
         spacing.border("╠","╬","╣",max_attempts)
         time.sleep(delay)  
@@ -110,6 +108,18 @@ def start_game(player_id,username,password):
         time.sleep(delay)
         print("".join(ui_pt))
         spacing.border("╠","╩","╣",max_attempts)
+
+        # LEGEND
+        time.sleep(delay)
+        print("║      ⚫ = Correct color & correct position" + ("     "*(max_attempts-10)) + "             ║")
+        time.sleep(delay)
+        print("║      ⚪ = Correct color but wrong position" + ("     "*(max_attempts-10)) + "             ║")
+        time.sleep(delay)
+        print("║      🔳 = Color not found" + ("     "*(max_attempts-10)) + "                              ║")
+        time.sleep(delay)
+        print("║      🔼 = Current attempt" + ("     "*(max_attempts-10)) + "                              ║")
+        time.sleep(delay)
+        print("║      ❌ = Failed attempt" + ("     "*(max_attempts-10)) + "                               ║")
 
         time.sleep(delay)
         print("║      [R]🔴  [G]🟢  [B]🔵   [Y]🟡   [W]⚪   [O]🟠" + ("     "*(max_attempts-10)) + "       ║")
