@@ -226,7 +226,7 @@ def start_game(player_id,username,password):
                                 for r in range (to_guess):
                                     secret_code_grid[r] = secret_code[r]
                                 render(0)
-                                print(f"You won in {attempts} attempts!")
+                                print(f"You won in {attempts + 1} attempts!")
                                 userscore = 10-attempts #compute userscore from the attempts
                                 attempts = 10 # set attempt value to 10 to exit the loop
                                 break
