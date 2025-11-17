@@ -250,10 +250,13 @@ def start_game(player_id,username,password):
 
 #Answer is revealed when user fails all 10 attempts
     if attempts >= max_attempts:
-          for r in range(to_guess):
-                secret_code_grid[r] = secret_code[r]
-                render(0)  
-                print("You've used all attempts! The secret code was revealed above.")
+          if all(pointer != "✅" for pointer in pointer_grid):
+                pointer_grid[max_attempts - 1] = "❌"  # Update the pointer grid for the last attempt
+                for r in range(to_guess):
+                        secret_code_grid[r] = secret_code[r]
+                render(0)
+        # Display the failure message
+                print(f"You've used all {max_attempts} attempts! The correct code was: {' '.join(secret_code)}")
 
     # Casting userscore to int to make sure it records properly with the function in scores.py
     return(username,userscore,password)
