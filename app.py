@@ -28,5 +28,16 @@ score.update_user_score(result[0],result[1],result[2])
 
 score.leaderboard()
 
+while True:
+    play_again = input("Play Again? [Y/N]: ")
+    if play_again.lower() == "y":
+        result = list(game.start_game(player[0],player[1],player[2]))
+        score.update_user_score(result[0],result[1],result[2])
+        score.leaderboard()
+    else:
+        print("Thank you for playing!")
+        break
+        
+
 #Testing collaborators commit
 # Testing Pull Request
